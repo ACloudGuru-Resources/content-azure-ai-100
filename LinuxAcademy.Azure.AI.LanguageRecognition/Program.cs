@@ -1,5 +1,7 @@
-﻿using Microsoft.Azure.CognitiveServices.Language.TextAnalytics;
+﻿using Azure;
 using System;
+using System.Globalization;
+using Azure.AI.TextAnalytics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,20 +13,16 @@ namespace LinuxAcademy.Azure.AI.LanguageRecognition
     {
         static void Main(string[] args)
         {
-            string endpoint = ; // insert your endpoint
-            string key = ; // insert your key
+            Uri endpoint = new Uri(""); // insert your endpoint
+            string key = ""; // insert your key
+            var credentials = new AzureKeyCredential(key);
+            var client = new TextAnalyticsClient(endpoint, credentials);
 
-            var credentials = new ApiKeyServiceClientCredentials(key);
-            var client = new TextAnalyticsClient(credentials)
-            {
-                Endpoint = endpoint
-            };
+            DetectedLanguage lang1 = client.DetectLanguage("This is a document written in English.");
+            Console.WriteLine($"Language: {lang1.Name}");
 
-            var result = client.DetectLanguage("This is a document written in English.");
-            Console.WriteLine($"Language: {result.DetectedLanguages[0].Name}");
-
-            result = client.DetectLanguage("Parlez Vous Francais?");
-            Console.WriteLine($"Language: {result.DetectedLanguages[0].Name}");
+            DetectedLanguage lang2 = client.DetectLanguage("Parlez Vous Francais?");
+            Console.WriteLine($"Language: {lang2.Name}");
         }
     }
 }
